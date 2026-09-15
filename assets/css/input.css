@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@source "../../*.php";
+@source "../../pages";
+@source "../../includes";
+@source "../../api";
+
+.post {
+    max-width: 700px;
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+}
+
+.post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post-header img {
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.post-content {
+    margin-top: 15px;
+}

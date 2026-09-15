@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.*
+
+# User uploaded files
+uploads/posts/*
+uploads/profile/*
+
+# Keep upload directories
+!uploads/posts/.gitkeep
+!uploads/profile/.gitkeep
+
+# Logs
+*.log
+
+# Editor files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
