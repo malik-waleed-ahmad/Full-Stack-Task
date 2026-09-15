@@ -6,6 +6,7 @@ RUN install-php-extensions pdo_mysql
 
 COPY . /app
 
-ENV SERVER_NAME=:${PORT}
+ENV SERVER_ROOT=/app
+ENV SERVER_NAME=http://
 
 CMD ["frankenphp", "run", "--config", "/etc/frankenphp/Caddyfile"]
