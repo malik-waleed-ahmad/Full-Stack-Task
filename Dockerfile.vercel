@@ -2,8 +2,23 @@ FROM dunglas/frankenphp:php8.3
 
 WORKDIR /app
 
-RUN install-php-extensions pdo_mysql
+# Install required PHP extensions
+RUN install-php-extensions pdo_mysql curl
 
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+# Copy Composer files first
+COPY composer.json composer.lock /app/
+
+# Install PHP dependencies
+RUN composer install \
+    --no-dev \
+    --prefer-dist \
+    --no-interaction \
+    --optimize-autoloader
+
+# Copy application files
 COPY . /app
 
 ENV SERVER_ROOT=/app

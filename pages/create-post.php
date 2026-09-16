@@ -11,6 +11,7 @@ require_once '../config/database.php';
 require_once '../includes/csrf.php';
 require_once '../includes/user-data.php';
 require_once '../includes/media.php';
+require_once '../includes/cloudinary.php';
 
 $basePath = '../';
 
@@ -65,8 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           !empty($_FILES['images']['name'][0])
         ) {
 
-          $uploadDirectory = '../uploads/posts/';
-
           $allowedTypes = [
             'image/jpeg',
             'image/png',
@@ -96,24 +95,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               throw new Exception('Each image must be smaller than 5 MB.');
             }
 
-            // Generate a unique filename
-            $extension = match ($fileType) {
-              'image/jpeg' => 'jpg',
-              'image/png'  => 'png',
-              'image/webp' => 'webp'
-            };
-
-            $filename = bin2hex(random_bytes(16)) . '.' . $extension;
-
-            $destination = $uploadDirectory . $filename;
-
-            // Move uploaded file
-            if (!move_uploaded_file($tmpName, $destination)) {
-              throw new Exception('Failed to upload image.');
-            }
-
-            // Save image URL in database
-            $imageUrl = 'uploads/posts/' . $filename;
+            // Upload image permanently to Cloudinary
+            $imageUrl = uploadImageToCloudinary(
+              $tmpName,
+              'full-stack-task/posts'
+            );
 
             $stmt = $pdo->prepare(
               "INSERT INTO post_images (post_id, image_url)

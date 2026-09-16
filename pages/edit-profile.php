@@ -7,6 +7,7 @@ require_once '../config/database.php';
 require_once '../includes/csrf.php';
 require_once '../includes/user-data.php';
 require_once '../includes/media.php';
+require_once '../includes/cloudinary.php';
 
 $userId = (int) $_SESSION['user_id'];
 
@@ -108,94 +109,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           }
 
 
-          // Choose safe extension
-          $extension = match ($fileType) {
+          // Upload profile picture to Cloudinary
+          $newProfilePicture = uploadImageToCloudinary(
+            $tmpName,
+            'full-stack-task/profile'
+          );
 
-            'image/jpeg' => 'jpg',
-            'image/png'  => 'png',
-            'image/webp' => 'webp'
-          };
-
-
-          // Profile upload folder
-          $uploadDirectory =
-            '../uploads/profile/';
-
-
-          // Create folder if it does not exist
-          if (!is_dir($uploadDirectory)) {
-
-            if (
-              !mkdir(
-                $uploadDirectory,
-                0755,
-                true
-              )
-            ) {
-
-              throw new Exception(
-                'Could not create profile upload directory.'
-              );
-            }
-          }
-
-
-          // Generate random safe filename
-          $filename =
-            bin2hex(random_bytes(16))
-            . '.'
-            . $extension;
-
-
-          $destination =
-            $uploadDirectory
-            . $filename;
-
-
-          // Move uploaded file
-          if (
-            !move_uploaded_file(
-              $tmpName,
-              $destination
-            )
-          ) {
-
-            throw new Exception(
-              'Failed to save profile picture.'
-            );
-          }
-
-
-          $newProfilePicture =
-            'uploads/profile/'
-            . $filename;
-
-
-          // Delete previous locally uploaded image
-          if (
-            !empty($profilePicture) &&
-            str_starts_with(
-              $profilePicture,
-              'uploads/profile/'
-            )
-          ) {
-
-            $oldProfileFile =
-              '../'
-              . $profilePicture;
-
-
-            if (is_file($oldProfileFile)) {
-
-              unlink($oldProfileFile);
-            }
-          }
-
-
-          $profilePicture =
-            $newProfilePicture;
+          $profilePicture = $newProfilePicture;
         }
-
 
         // Update database
         $stmt = $pdo->prepare(
