@@ -1,8 +1,6 @@
 <?php
 
-if (session_status() === PHP_SESSION_NONE) {
-  session_start();
-}
+require_once '../includes/db-session.php';
 
 require_once '../includes/auth.php';
 requireLogin('login.php');
